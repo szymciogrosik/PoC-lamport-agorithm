@@ -22,8 +22,9 @@ public class StartAllGenerals {
 
         // Losowanie, który port ma być zdrajcą
         Random generator = new Random();
-        for (int i = 0; i < TRAITOR_GENERALS; i++)
-            traitorGeneralsNumbers.add(generator.nextInt(LOYAL_GENERALS + TRAITOR_GENERALS));
+        while(traitorGeneralsNumbers.size() != TRAITOR_GENERALS) {
+            handleTraitor(generator.nextInt(LOYAL_GENERALS + TRAITOR_GENERALS), traitorGeneralsNumbers);
+        }
 
         // Uruchamianie wszystkich aplikacji
         for (int i = 0; i < LOYAL_GENERALS+TRAITOR_GENERALS; i++) {
@@ -35,18 +36,30 @@ public class StartAllGenerals {
 
         // Wysyłanie sygnału startowego do generałów po uruchomieniu aplikacji
         for (int element : generalList) {
-            String body = new RestTemplate()
-                    .getForEntity("http://localhost:" + element + "/startSendMessage", String.class)
-                    .getBody();
+          new RestTemplate()
+              .getForEntity("http://localhost:" + element + "/startSendMessage", String.class)
+              .getBody();
         }
     }
 
     private static boolean isLoyal(int actualNumber, LinkedList<Integer> traitorList) {
-        boolean isLoyal = true;
         for (int element : traitorList) {
             if(actualNumber == element)
-                isLoyal = false;
+                return false;
         }
-        return isLoyal;
+        return true;
+    }
+
+    private static void handleTraitor(int generalNumber, LinkedList<Integer> traitorGeneralsNumbers) {
+        boolean alreadyExists = false;
+        for(Integer number: traitorGeneralsNumbers) {
+            if(number == generalNumber) {
+                alreadyExists = true;
+                break;
+            }
+        }
+        if(!alreadyExists) {
+            traitorGeneralsNumbers.add(generalNumber);
+        }
     }
 }
