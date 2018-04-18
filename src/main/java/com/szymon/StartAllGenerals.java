@@ -36,7 +36,7 @@ public class StartAllGenerals {
 
         // Wysyłanie sygnału startowego do generałów po uruchomieniu aplikacji
         for (int element : generalList) {
-          new RestTemplate()
+          String body = new RestTemplate()
               .getForEntity("http://localhost:" + element + "/startSendMessage", String.class)
               .getBody();
         }
