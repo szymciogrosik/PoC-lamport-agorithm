@@ -59,8 +59,7 @@ public class GeneralService {
     public GeneralValueDto getNewGeneral() {
         return GeneralValueDto.builder()
                 .port(this.getThisGeneralPort())
-                // Todo: może warto sparametryzować gdzieś wyżej? To jest zakres losowania tej liczebności oddziału.
-                .number(new Random().nextInt(10))
+                .number(new Random().nextInt(Integer.valueOf(environment.getProperty("rangeOfArmySize"))))
                 .build();
     }
 
@@ -94,7 +93,6 @@ public class GeneralService {
     }
 
     public void findFinalSolution() {
-        // Todo: najcześciej zrobiłem wszystko na LinkedList a może lepiej na tablich by było?
         LinkedList<Integer> finalSolution = new LinkedList<>();
 
         for (int i = 0; i < generalsVectors.size(); i++) {
