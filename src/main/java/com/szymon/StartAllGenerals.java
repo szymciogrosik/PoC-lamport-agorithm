@@ -9,8 +9,8 @@ public class StartAllGenerals {
 
     public static void main(String[] args) {
 
-        int LOYAL_GENERALS = 3;
-        int TRAITOR_GENERALS = 1;
+        int LOYAL_GENERALS = 5;
+        int TRAITOR_GENERALS = 2;
         int START_PORT = 4000;
 
         LinkedList<Integer> generalList = new LinkedList<>();
