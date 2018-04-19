@@ -2,15 +2,14 @@ package com.szymon.service;
 
 import com.szymon.dto.GeneralValueDto;
 import com.szymon.dto.GeneralsValuesDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class GeneralService {
@@ -94,11 +93,16 @@ public class GeneralService {
                 .append("\n")
                 .append("Generał ")
                 .append(this.getGeneralNumber(this.getThisGeneralPort()))
-                .append(" otrzymał wektor:")
+                .append(" otrzymał wektory:")
                 .append("\n");
 
         for (int[] element : this.generalsVectors)
             generalsVectorInString.append(Arrays.toString(element)).append("\n");
+
+        generalsVectorInString
+                .append("Ustalony konsensus: \n")
+                .append(this.findFinalSolution())
+                .append("\n");
 
         return generalsVectorInString.toString();
     }
@@ -107,7 +111,7 @@ public class GeneralService {
         return getAddress() + port + query;
     }
 
-    public int getRandomArmySize() {
+    private int getRandomArmySize() {
         return new Random().nextInt(getRangeOfArmySize());
     }
 
@@ -118,14 +122,45 @@ public class GeneralService {
             this.generalsValuesDto.getReceivedValuesFromGenerals()[this.getGeneralNumber(general.getPort())] = this.getRandomArmySize();
     }
 
-    public void findFinalSolution() {
-        LinkedList<Integer> finalSolution = new LinkedList<>();
+    private String findFinalSolution() {
+        // Dodaj elementy kolumny do kolekcji Set
+        LinkedList<Integer> finalSollution = new LinkedList<>();
 
-        for (int i = 0; i < generalsVectors.size(); i++) {
-            for (int j = 0; j < generalsVectors.get(i).length; j++) {
-                // Todo: Algorytm porównywania wartości
+        // Kolumna
+        for (int i = 0; i < generalsVectors.get(0).length; i++) {
+            // Dodaj elementy kolumny do kolekcji Set
+            Set<Integer> collectionWithUniQueValues = new HashSet<>();
+            LinkedList<ElementToCompare> columnSolution = new LinkedList<>();
 
+            // Wiersz
+            for (int j = 0; j < generalsVectors.size(); j++) {
+                collectionWithUniQueValues.add(generalsVectors.get(j)[i]);
             }
+            for (int element : collectionWithUniQueValues) {
+                int counter = 0;
+                for (int[] generalsVector : generalsVectors) {
+                    if (element == generalsVector[i])
+                        counter++;
+                }
+                columnSolution.add(new ElementToCompare(element, counter));
+            }
+
+            columnSolution.sort((o1, o2) -> o2.counter - o1.counter);
+
+            if(columnSolution.getFirst().counter >= (this.getListWithGeneralsPort().size()-1)/2 + 1)
+                finalSollution.add(columnSolution.getFirst().number);
+            else
+                finalSollution.add(-1);
         }
+
+        return finalSollution.toString();
+    }
+
+    @AllArgsConstructor
+    private class ElementToCompare {
+        @Getter
+        private int number;
+        @Getter
+        private int counter;
     }
 }

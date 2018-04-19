@@ -88,8 +88,6 @@ public class GeneralController {
             log.info(generalService.getGeneralVectorsFromGeneralsInString());
         }
 
-        generalService.findFinalSolution();
-
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

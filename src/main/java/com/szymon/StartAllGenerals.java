@@ -8,8 +8,9 @@ import java.util.Random;
 public class StartAllGenerals {
     public static void main(String[] args) {
 
-        final int LOYAL_GENERALS      = 5;
-        final int TRAITOR_GENERALS    = 2;
+        // Uwaga wszystkich procesów musi być n >= 3t+1 gdzie t-liczba zdajców
+        final int LOYAL_GENERALS      = 3;
+        final int TRAITOR_GENERALS    = 1;
         final int START_PORT          = 4000;
         final int RANGE_OF_ARMY_SIZE  = 10;
         final String ADDRESS          = "http://localhost:";
