@@ -9,15 +9,13 @@ import java.util.LinkedList;
 @SpringBootApplication
 public class StartGeneral {
 
-    private final int rangeOfArmySize = 10;
-
-    public void start(String[] args, boolean isLoyal, int serverPort, LinkedList<Integer> generalList) {
+    public void start(String[] args, boolean isLoyal, int serverPort, LinkedList<Integer> generalList, int rangeOfArmySize, String address) {
         HashMap<String, Object> props = new HashMap<>();
         props.put("server.port", serverPort);
-        props.put("general.serverPort", serverPort);
-        props.put("general.isLoyal", isLoyal);
-        props.put("general.generalList", generalList);
+        props.put("isLoyal", isLoyal);
+        props.put("generalPortList", generalList);
         props.put("rangeOfArmySize", rangeOfArmySize);
+        props.put("address", address);
 
         new SpringApplicationBuilder()
                 .sources(StartGeneral.class)

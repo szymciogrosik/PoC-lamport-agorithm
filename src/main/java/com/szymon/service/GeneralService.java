@@ -28,7 +28,7 @@ public class GeneralService {
     }
 
     public LinkedList<Integer> getListWithGeneralsPort() {
-        String[] stringListWithGeneralsPort = environment.getProperty("general.generalList").split(",");
+        String[] stringListWithGeneralsPort = environment.getProperty("generalPortList").split(",");
         LinkedList<Integer> integerListWithGeneralsPort = new LinkedList<>();
 
         for (String element : stringListWithGeneralsPort)
@@ -38,11 +38,17 @@ public class GeneralService {
     }
 
     public int getThisGeneralPort() {
-        return Integer.valueOf(environment.getProperty("general.serverPort"));
+        return Integer.valueOf(environment.getProperty("server.port"));
     }
 
     public boolean getThisGeneralIsLoyal() {
-        return Boolean.valueOf(environment.getProperty("general.isLoyal"));
+        return Boolean.valueOf(environment.getProperty("isLoyal"));
+    }
+
+    private String getAddress() { return environment.getProperty("address");}
+
+    private int getRangeOfArmySize() {
+        return Integer.valueOf(environment.getProperty("rangeOfArmySize"));
     }
 
     public int getGeneralNumber(int port) {
@@ -59,7 +65,7 @@ public class GeneralService {
     public GeneralValueDto getNewGeneral() {
         return GeneralValueDto.builder()
                 .port(this.getThisGeneralPort())
-                .number(new Random().nextInt(Integer.valueOf(environment.getProperty("rangeOfArmySize"))))
+                .number(new Random().nextInt(getRangeOfArmySize()))
                 .build();
     }
 
@@ -84,12 +90,32 @@ public class GeneralService {
     }
 
     public String getGeneralVectorsFromGeneralsInString() {
-        StringBuilder generalsVectorInString = new StringBuilder();
+        StringBuilder generalsVectorInString = new StringBuilder()
+                .append("\n")
+                .append("Generał ")
+                .append(this.getGeneralNumber(this.getThisGeneralPort()))
+                .append(" otrzymał wektor:")
+                .append("\n");
 
         for (int[] element : this.generalsVectors)
-            generalsVectorInString.append(Arrays.toString(element)).append(" ");
+            generalsVectorInString.append(Arrays.toString(element)).append("\n");
 
         return generalsVectorInString.toString();
+    }
+
+    public String buildUri(int port, String query) {
+        return getAddress() + port + query;
+    }
+
+    public int getRandomArmySize() {
+        return new Random().nextInt(getRangeOfArmySize());
+    }
+
+    public void saveArmySize(GeneralValueDto general) {
+        if(this.getThisGeneralIsLoyal())
+            this.generalsValuesDto.getReceivedValuesFromGenerals()[this.getGeneralNumber(general.getPort())] = general.getNumber();
+        else
+            this.generalsValuesDto.getReceivedValuesFromGenerals()[this.getGeneralNumber(general.getPort())] = this.getRandomArmySize();
     }
 
     public void findFinalSolution() {
