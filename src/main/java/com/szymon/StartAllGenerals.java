@@ -3,13 +3,12 @@ package com.szymon;
 import com.szymon.service.SaveToFileService;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
 public class StartAllGenerals {
-    public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void main(String[] args) {
 
         // Uwaga wszystkich procesów musi być n >= 3t+1 gdzie t-liczba zdajców
         final int LOYAL_GENERALS      = 9;
@@ -30,6 +29,9 @@ public class StartAllGenerals {
         while(traitorGeneralsNumbers.size() != TRAITOR_GENERALS) {
             handleTraitor(generator.nextInt(LOYAL_GENERALS + TRAITOR_GENERALS), traitorGeneralsNumbers);
         }
+
+        // Sortowanie listy zdrajców
+        Collections.sort(traitorGeneralsNumbers);
 
         // Zapis określonych numerów zdrajców do pliku score.txt
         new SaveToFileService().writeToNewFile(
