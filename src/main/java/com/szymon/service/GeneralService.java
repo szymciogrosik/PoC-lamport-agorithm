@@ -17,6 +17,9 @@ public class GeneralService {
     @Autowired
     Environment environment;
 
+    @Autowired
+    private SaveToFileService saveToFileService;
+
     public GeneralsValuesDto generalsValuesDto;
     public LinkedList<int[]> generalsVectors;
 
@@ -101,10 +104,39 @@ public class GeneralService {
 
         generalsVectorInString
                 .append("Ustalony konsensus: \n")
-                .append(this.findFinalSolution())
+                .append(getConsensus())
                 .append("\n");
 
+        saveToFileService.writeToExistingFile(
+                "Generał " +
+                this.getGeneralNumber(this.getThisGeneralPort()) +
+                " wyznaczył konsensus: " +
+                getConsensus() +
+                ". Wg niego zdrajcy to generałowie: " +
+                getTraitor() +
+                "\n"
+        );
+
         return generalsVectorInString.toString();
+    }
+
+    private String getConsensus() {
+        return this.findFinalSolution().toString();
+    }
+
+    private String getTraitor() {
+        LinkedList<Integer> traitorList = new LinkedList<>();
+        LinkedList<Integer> finalSolution = this.findFinalSolution();
+
+        for (int i = 0; i < finalSolution.size(); i++) {
+            if(finalSolution.get(i) == -1)
+                traitorList.add(i);
+        }
+
+        if(traitorList.size() > 0)
+            return traitorList.toString();
+        else
+            return "nie udało się określić zdrajcy";
     }
 
     public String buildUri(int port, String query) {
@@ -122,9 +154,9 @@ public class GeneralService {
             this.generalsValuesDto.getReceivedValuesFromGenerals()[this.getGeneralNumber(general.getPort())] = this.getRandomArmySize();
     }
 
-    private String findFinalSolution() {
+    private LinkedList<Integer> findFinalSolution() {
         // Dodaj elementy kolumny do kolekcji Set
-        LinkedList<Integer> finalSollution = new LinkedList<>();
+        LinkedList<Integer> finalSolution = new LinkedList<>();
 
         // Kolumna
         for (int i = 0; i < generalsVectors.get(0).length; i++) {
@@ -148,12 +180,12 @@ public class GeneralService {
             columnSolution.sort((o1, o2) -> o2.counter - o1.counter);
 
             if(columnSolution.getFirst().counter >= (this.getListWithGeneralsPort().size()-1)/2 + 1)
-                finalSollution.add(columnSolution.getFirst().number);
+                finalSolution.add(columnSolution.getFirst().number);
             else
-                finalSollution.add(-1);
+                finalSolution.add(-1);
         }
 
-        return finalSollution.toString();
+        return finalSolution;
     }
 
     @AllArgsConstructor

@@ -1,7 +1,9 @@
 package com.szymon;
 
+import com.szymon.service.SaveToFileService;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -9,8 +11,8 @@ public class StartAllGenerals {
     public static void main(String[] args) {
 
         // Uwaga wszystkich procesów musi być n >= 3t+1 gdzie t-liczba zdajców
-        final int LOYAL_GENERALS      = 3;
-        final int TRAITOR_GENERALS    = 1;
+        final int LOYAL_GENERALS      = 9;
+        final int TRAITOR_GENERALS    = 4;
         final int START_PORT          = 4000;
         final int RANGE_OF_ARMY_SIZE  = 10;
         final String ADDRESS          = "http://localhost:";
@@ -27,6 +29,16 @@ public class StartAllGenerals {
         while(traitorGeneralsNumbers.size() != TRAITOR_GENERALS) {
             handleTraitor(generator.nextInt(LOYAL_GENERALS + TRAITOR_GENERALS), traitorGeneralsNumbers);
         }
+
+        // Sortowanie listy zdrajców
+        Collections.sort(traitorGeneralsNumbers);
+
+        // Zapis określonych numerów zdrajców do pliku score.txt
+        new SaveToFileService().writeToNewFile(
+                "Aplikacja powołująca: wylosowani zdrajcy to generałowie o numerach: " +
+                        traitorGeneralsNumbers.toString() +
+                        "\n"
+        );
 
         // Uruchamianie wszystkich aplikacji
         for (int i = 0; i < LOYAL_GENERALS+TRAITOR_GENERALS; i++) {
